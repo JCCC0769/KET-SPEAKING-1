@@ -1,0 +1,914 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KET 口语练习 · 听题作答</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background: linear-gradient(145deg, #f5f9ff 0%, #e6f0fa 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 800px;
+            width: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border-radius: 48px;
+            padding: 30px 28px 40px;
+            box-shadow: 0 25px 50px -10px rgba(0, 20, 40, 0.25), 0 0 0 1px rgba(255, 255, 255, 0.6);
+            transition: all 0.2s;
+        }
+
+        h1 {
+            font-size: 26px;
+            font-weight: 600;
+            color: #1b2d4a;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            letter-spacing: -0.3px;
+            border-bottom: 2px solid rgba(60, 100, 177, 0.15);
+            padding-bottom: 16px;
+        }
+
+        h1 small {
+            font-size: 16px;
+            font-weight: 400;
+            color: #3e5f7e;
+            background: rgba(60, 100, 177, 0.08);
+            padding: 6px 14px;
+            border-radius: 30px;
+        }
+
+        .category-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 32px;
+        }
+
+        .cat-btn {
+            background: white;
+            border: 1px solid #c8d9ed;
+            padding: 10px 18px;
+            border-radius: 40px;
+            font-weight: 500;
+            font-size: 15px;
+            color: #1a314e;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+            flex: 1 0 auto;
+            max-width: 120px;
+            text-align: center;
+        }
+
+        .cat-btn:hover {
+            background: #dce8f7;
+            border-color: #7d9fd3;
+            transform: translateY(-1px);
+        }
+
+        .cat-btn.active {
+            background: #1b3b6b;
+            border-color: #1b3b6b;
+            color: white;
+            box-shadow: 0 8px 14px -8px rgba(20, 60, 130, 0.4);
+        }
+
+        .question-card {
+            background: white;
+            border-radius: 32px;
+            padding: 24px 28px 28px;
+            box-shadow: 0 8px 24px rgba(0, 20, 40, 0.06);
+            margin-bottom: 24px;
+            border: 1px solid rgba(255,255,255,0.7);
+        }
+
+        .question-number {
+            font-size: 14px;
+            color: #6f8aa8;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .audio-play-area {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .play-btn {
+            background: #0d2d4b;
+            border: none;
+            color: white;
+            font-size: 28px;
+            width: 72px;
+            height: 72px;
+            border-radius: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.15s;
+            box-shadow: 0 10px 18px -6px rgba(13, 45, 75, 0.3);
+        }
+
+        .play-btn:hover {
+            background: #1b4068;
+            transform: scale(1.02);
+        }
+
+        .play-btn:active {
+            transform: scale(0.94);
+        }
+
+        .play-btn.playing {
+            background: #4d7aa8;
+        }
+
+        .timer-badge {
+            font-size: 18px;
+            background: #eef4fb;
+            padding: 10px 20px;
+            border-radius: 40px;
+            color: #1f3b5c;
+            font-weight: 500;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timer-badge span {
+            background: #1b3b6b;
+            color: white;
+            border-radius: 30px;
+            padding: 0 14px;
+            line-height: 30px;
+            font-weight: 600;
+            min-width: 38px;
+            text-align: center;
+        }
+
+        .action-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin: 18px 0 8px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1.5px solid #b4cce3;
+            padding: 12px 20px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: #1d3757;
+            cursor: pointer;
+            transition: 0.12s;
+            font-size: 15px;
+            flex: 1 1 auto;
+        }
+
+        .btn-outline:hover {
+            background: #e2edfa;
+            border-color: #7a9ed0;
+        }
+
+        .btn-primary {
+            background: #1b3b6b;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 500;
+            color: white;
+            cursor: pointer;
+            transition: 0.12s;
+            font-size: 15px;
+            box-shadow: 0 4px 10px rgba(27, 59, 107, 0.2);
+            flex: 1 1 auto;
+        }
+
+        .btn-primary:hover {
+            background: #264f86;
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.5;
+            transform: none;
+            cursor: not-allowed;
+        }
+
+        .reveal-box {
+            background: #f0f6fe;
+            border-radius: 24px;
+            padding: 20px 24px;
+            margin: 18px 0 10px;
+            border-left: 5px solid #30649b;
+            transition: 0.2s;
+        }
+
+        .reveal-box .en {
+            font-weight: 600;
+            color: #0e2742;
+            font-size: 18px;
+            margin-bottom: 6px;
+        }
+
+        .reveal-box .zh {
+            color: #2c4e74;
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 1px dashed #bacee6;
+            padding-bottom: 10px;
+        }
+
+        .reveal-box .ref {
+            background: white;
+            padding: 14px 18px;
+            border-radius: 18px;
+            color: #143150;
+            font-size: 16px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+            margin-top: 6px;
+        }
+
+        .ref-label {
+            font-size: 13px;
+            color: #4d74a0;
+            font-weight: 500;
+            letter-spacing: 0.3px;
+            margin-top: 6px;
+        }
+
+        .ref-zh {
+            color: #1b3f64;
+            background: #e2edfb;
+            padding: 10px 16px;
+            border-radius: 16px;
+            margin-top: 8px;
+            font-size: 15px;
+        }
+
+        .flex-space {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 6px;
+        }
+
+        .status-hint {
+            color: #3d688f;
+            font-size: 14px;
+            background: #dde9f7;
+            padding: 6px 18px;
+            border-radius: 30px;
+            display: inline-block;
+        }
+
+        .footer-note {
+            margin-top: 18px;
+            color: #5a7b9b;
+            font-size: 14px;
+            text-align: center;
+            border-top: 1px solid #d3e0ed;
+            padding-top: 16px;
+        }
+
+        @media (max-width: 550px) {
+            .app-container { padding: 20px 16px; }
+            .cat-btn { max-width: 100%; flex: 1 1 80px; font-size: 13px; padding: 8px 12px; }
+            .play-btn { width: 64px; height: 64px; font-size: 24px; }
+            .question-card { padding: 18px; }
+        }
+    </style>
+</head>
+<body>
+<div class="app-container" id="app">
+    <h1>
+        🎧 口语听答
+        <small>KET Part 1</small>
+    </h1>
+
+    <!-- 分类按钮 -->
+    <div class="category-grid" id="categoryContainer">
+        <button class="cat-btn" data-cat="0">Who</button>
+        <button class="cat-btn" data-cat="1">What</button>
+        <button class="cat-btn" data-cat="2">Which</button>
+        <button class="cat-btn" data-cat="3">When</button>
+        <button class="cat-btn" data-cat="4">Where</button>
+        <button class="cat-btn" data-cat="5">How</button>
+        <button class="cat-btn" data-cat="6">General</button>
+        <button class="cat-btn" data-cat="7">Tell me</button>
+    </div>
+
+    <!-- 题目卡片 -->
+    <div class="question-card">
+        <div class="question-number">
+            <span id="qIndexDisplay">第 1 / 11 题</span>
+            <span class="status-hint" id="statusHint">🎙️ 点击播放</span>
+        </div>
+
+        <!-- 音频播放区 (无字幕) -->
+        <div class="audio-play-area">
+            <button class="play-btn" id="playBtn" aria-label="播放题目音频">▶</button>
+            <div class="timer-badge">
+                ⏱️ 回答时间 <span id="timerDisplay">10</span>s
+            </div>
+            <span style="font-size:15px; color:#3d5f80; margin-left:auto;">👂 只听音频</span>
+        </div>
+
+        <!-- 操作按钮 -->
+        <div class="action-row">
+            <button class="btn-outline" id="showQuestionBtn">📖 显示题目 & 中文</button>
+            <button class="btn-outline" id="showAnswerBtn">💡 参考答案 & 中文</button>
+        </div>
+
+        <!-- 显示区：题目、中文、参考答案 -->
+        <div id="revealArea" class="reveal-box" style="display: none;">
+            <div class="en" id="enQuestion">—</div>
+            <div class="zh" id="zhQuestion">—</div>
+            <div class="ref-label">📌 参考回答</div>
+            <div class="ref" id="enAnswer">—</div>
+            <div class="ref-zh" id="zhAnswer">—</div>
+        </div>
+
+        <!-- 下一题 & 进度 -->
+        <div class="flex-space">
+            <span id="progressText" style="color:#42658a; font-size:15px;">Who · 1/11</span>
+            <button class="btn-primary" id="nextBtn">➡️ 下一题</button>
+        </div>
+    </div>
+    <div class="footer-note">
+        ⏳ 播放后自动计时10秒 · 点击按钮查看题目/答案
+    </div>
+</div>
+
+<script>
+    (function() {
+        // --------------------------------------------------------------
+        // 1. 数据 (八类, 完全按照题库整理)
+        // --------------------------------------------------------------
+        const questionData = [
+            // 0: Who (11)
+            {
+                category: "Who",
+                list: [
+                    { en: "Who does the housework in your family?", zh: "你家谁做家务？", answer: "My mother does most of the housework in my family. I also help her with simple work such as tidying my room, because it makes our home clean and tidy.", answerZh: "我妈妈做大部分家务。我也帮她做一些简单的事，比如整理房间，因为这能让我们的家干净整洁。" },
+                    { en: "Who is the oldest person in your family?", zh: "你家年纪最大的人是谁？", answer: "My grandma is the oldest person in my family. She is very kind and she often tells me interesting old stories in her free time.", answerZh: "我奶奶是家里年纪最大的。她很善良，空闲时经常给我讲有趣的老故事。" },
+                    { en: "Who uses the Internet most in your family?", zh: "你家谁用网络最多？", answer: "My father uses the Internet most in my family. He needs it for his work every day, and it helps him finish his tasks quickly.", answerZh: "我爸爸用网络最多。他每天工作需要网络，这能帮他快速完成任务。" },
+                    { en: "Who cooks in your family?", zh: "你家谁做饭？", answer: "My mum usually cooks delicious food for my family. She is good at cooking many dishes, such as fish and vegetables, which are healthy for us.", answerZh: "我妈妈通常为家人做美味的饭菜。她擅长做很多菜，比如鱼和蔬菜，对我们健康有益。" },
+                    { en: "Who is your favourite singer?", zh: "你最喜欢的歌手是谁？", answer: "My favourite singer is a young Chinese singer. I like her because her songs are gentle and positive, and listening to her music makes me relaxed.", answerZh: "我最喜欢的歌手是一位年轻的中国歌手。我喜欢她因为她的歌温柔又积极，听她的音乐让我放松。" },
+                    { en: "Who is your best friend?", zh: "你最好的朋友是谁？", answer: "My best friend is my classmate Lily. We always study and play together, and she is always ready to help me when I have problems.", answerZh: "我最好的朋友是我的同学Lily。我们总是一起学习和玩耍，她在我遇到问题时总是乐于帮助我。" },
+                    { en: "Who do you often read books with?", zh: "你经常和谁一起看书？", answer: "I often read books with my best friend after school. We share good storybooks with each other and talk about interesting plots together.", answerZh: "放学后我经常和我最好的朋友一起看书。我们互相分享好看的故事书，一起讨论有趣的情节。" },
+                    { en: "Who do you watch programmes about animals with?", zh: "你和谁一起看动物节目？", answer: "I usually watch animal programmes with my little sister. She loves small animals very much, and these programmes teach us lots of knowledge about nature.", answerZh: "我通常和我妹妹一起看动物节目。她非常喜欢小动物，这些节目教会我们很多关于大自然的知识。" },
+                    { en: "Who do you usually talk to in the evening?", zh: "晚上你通常和谁聊天？", answer: "I usually talk to my parents in the evening. I tell them my interesting stories at school every day, and it makes our family closer.", answerZh: "晚上我通常和父母聊天。我每天告诉他们我在学校的有趣故事，这让我们家庭更亲密。" },
+                    { en: "Who do you usually go shopping with?", zh: "你通常和谁一起去购物？", answer: "I usually go shopping with my mother on weekends. She knows what things are suitable for me, and we always have a good time together.", answerZh: "周末我通常和妈妈一起去购物。她知道什么东西适合我，我们总是一起度过愉快的时光。" },
+                    { en: "Who do you go to parties with?", zh: "你和谁一起去聚会？", answer: "I always go to parties with my close friends. We play games and enjoy delicious food together at parties, which is very fun.", answerZh: "我总是和我的好朋友一起去聚会。我们在聚会上一起玩游戏、享用美食，非常有趣。" }
+                ]
+            },
+            // 1: What (28)
+            {
+                category: "What",
+                list: [
+                    { en: "What is your favourite subject? Why?", zh: "你最喜欢的科目是什么？为什么？", answer: "My favourite subject is English. I like it because it is very interesting, and it helps me talk with foreign people and know more new things.", answerZh: "我最喜欢的科目是英语。我喜欢它因为它很有趣，而且能帮我和外国人交流，了解更多新事物。" },
+                    { en: "What's your favourite animal?", zh: "你最喜欢的动物是什么？", answer: "My favourite animal is the cat. It is cute and quiet, and watching lovely cats makes me feel happy and calm.", answerZh: "我最喜欢的动物是猫。它很可爱又安静，看着可爱的猫让我感到开心和平静。" },
+                    { en: "What's your favourite food?", zh: "你最喜欢的食物是什么？", answer: "My favourite food is noodles. They taste delicious and are easy to digest. I usually eat tomato and egg noodles for lunch.", answerZh: "我最喜欢的食物是面条。它们味道鲜美而且容易消化。我午餐通常吃番茄鸡蛋面。" },
+                    { en: "What is your favourite fruit? Why?", zh: "你最喜欢的水果是什么？为什么？", answer: "My favourite fruit is apple. I love it because it is sweet and crispy, and it offers me lots of vitamins to keep healthy.", answerZh: "我最喜欢的水果是苹果。我喜欢它因为它又甜又脆，而且给我提供很多维生素来保持健康。" },
+                    { en: "What subject do you like best?", zh: "你最喜欢哪门课？", answer: "I like PE best among all subjects. I can do sports with my classmates in PE class, and it makes me strong and energetic.", answerZh: "在所有科目中我最喜欢体育。我可以在体育课上和同学们一起运动，这让我强壮有活力。" },
+                    { en: "What kind of sports do you like best?", zh: "你最喜欢什么运动？", answer: "I like playing badminton best. It is an easy sport for me, and playing it every week helps me exercise my body.", answerZh: "我最喜欢打羽毛球。对我来说这是一项简单的运动，每周打羽毛球帮我锻炼身体。" },
+                    { en: "What kind of music do you like best?", zh: "你最喜欢什么类型的音乐？", answer: "I like light music best. It is soft and peaceful, and listening to it makes me relaxed after busy study.", answerZh: "我最喜欢轻音乐。它柔和宁静，在忙碌的学习之后听一听让我放松。" },
+                    { en: "What kind of food do you like best?", zh: "你最喜欢什么类型的食物？", answer: "I like healthy light food best, such as vegetables and fruits. They are good for my body and make me feel comfortable.", answerZh: "我最喜欢健康的清淡食物，比如蔬菜和水果。它们对我的身体有好处，让我感觉舒适。" },
+                    { en: "What kind of things do you like reading?", zh: "你喜欢读什么样的书？", answer: "I like reading storybooks and science books best. Storybooks bring me fun, and science books help me learn more knowledge.", answerZh: "我最喜欢读故事书和科学书。故事书带给我乐趣，科学书帮我学到更多知识。" },
+                    { en: "What kind of programmes do you like to watch on TV?", zh: "你喜欢看什么类型的电视节目？", answer: "I like watching animal and nature programmes. They show me different animals and beautiful scenery, and they make me love nature more.", answerZh: "我喜欢看动物和自然节目。它们向我展示不同的动物和美丽的风景，让我更加热爱自然。" },
+                    { en: "What kind of movies do you like?", zh: "你喜欢什么类型的电影？", answer: "I like cartoon movies best. They are funny and warm, and they always bring me good moods and positive energy.", answerZh: "我最喜欢卡通电影。它们有趣又温暖，总是带给我好心情和正能量。" },
+                    { en: "What do you like to do in your spare time?", zh: "空闲时间你喜欢做什么？", answer: "In my spare time, I like reading books and listening to music. These quiet activities help me relax after studying for a long time.", answerZh: "空闲时间我喜欢读书和听音乐。这些安静的活动帮助我在长时间学习之后放松。" },
+                    { en: "What do you like to do most on the Internet?", zh: "你在网上最喜欢做什么？", answer: "I like learning English and watching short educational videos on the Internet. It helps me study better and know more new things.", answerZh: "我喜欢在网上学英语和看短的教育视频。这帮我学得更好，了解更多新事物。" },
+                    { en: "What do you usually have for breakfast?", zh: "你早餐通常吃什么？", answer: "I usually have milk, bread and eggs for breakfast. They are nutritious and give me enough energy for my morning study.", answerZh: "我早餐通常喝牛奶、吃面包和鸡蛋。它们有营养，给我早上学习提供足够的能量。" },
+                    { en: "What did you have for breakfast this morning?", zh: "今天早上你吃了什么早餐？", answer: "I had a cup of warm milk and a sandwich for breakfast this morning. It was tasty and kept me full until lunch time.", answerZh: "今天早上我喝了一杯热牛奶，吃了一个三明治。很好吃，让我一直饱到午饭时间。" },
+                    { en: "What's your name?", zh: "你叫什么名字？", answer: "My Chinese name is [你的名字], and I also have a simple English name. All my teachers and classmates call me this name every day.", answerZh: "我的中文名字是[你的名字]，我也有一个简单的英文名字。我的老师和同学每天都这样叫我。" },
+                    { en: "What is your favourite time of the year?", zh: "一年中你最喜欢什么时候？", answer: "My favourite time of the year is summer vacation. I can have a long rest and go travelling with my family in this period.", answerZh: "一年中我最喜欢暑假。我可以有很长的休息时间，和家人一起去旅行。" },
+                    { en: "What do you enjoy doing with your friends?", zh: "你喜欢和朋友一起做什么？", answer: "I enjoy playing outdoor games and chatting with my friends. Playing together makes our friendship stronger and more fun.", answerZh: "我喜欢和朋友一起玩户外游戏和聊天。一起玩让我们的友谊更牢固、更有趣。" },
+                    { en: "What time do you usually get up?", zh: "你通常几点起床？", answer: "I usually get up at seven o'clock every morning. It is a good time for me to get ready for school and have a nice breakfast.", answerZh: "我每天早上通常七点起床。这个时间对我来说正好准备上学和好好吃早餐。" },
+                    { en: "What type of shops do you go to?", zh: "你去什么类型的商店？", answer: "I often go to stationery shops and bookshops. I need to buy pens and notebooks for study, and I can find interesting books there.", answerZh: "我经常去文具店和书店。我需要买笔和笔记本学习用，而且在那里能找到有趣的书。" },
+                    { en: "What do you enjoy buying when you go shopping?", zh: "购物时你喜欢买什么？", answer: "I enjoy buying cute stationery and small snacks when I go shopping. These small things make me feel happy and satisfied.", answerZh: "购物时我喜欢买可爱的文具和小零食。这些小东西让我感到开心和满足。" },
+                    { en: "What do you do when you're listening to music?", zh: "你听音乐时会做什么？", answer: "When I listen to music, I usually sit quietly or tidy my desk. Soft music makes my boring housework more enjoyable.", answerZh: "我听音乐时通常安静地坐着或整理书桌。轻柔的音乐让无聊的家务变得更愉快。" },
+                    { en: "What activities can you do in your town?", zh: "你所在的小镇能做什么活动？", answer: "There are many activities I can do in my town, such as walking in the park and playing sports in the sports centre. They make my life colourful.", answerZh: "我在镇上可以做很多活动，比如在公园散步、在体育中心做运动。它们让我的生活多姿多彩。" },
+                    { en: "What do you take with you to school?", zh: "你带什么东西去学校？", answer: "I take my schoolbag, textbooks, notebooks and a water bottle to school every day. These things help me study well at school.", answerZh: "我每天带书包、课本、笔记本和水壶去学校。这些东西帮我在学校好好学习。" },
+                    { en: "What time do your lessons start?", zh: "你的课几点开始？", answer: "My lessons start at eight o'clock in the morning. I always arrive at school early to prepare for my new lessons.", answerZh: "我的课早上八点开始。我总是早到学校准备新课。" },
+                    { en: "What do you usually eat at parties?", zh: "聚会时你通常吃什么？", answer: "I usually eat cakes, fruits and small cookies at parties. These foods are sweet and popular among kids at parties.", answerZh: "聚会时我通常吃蛋糕、水果和小饼干。这些食物甜甜的，在聚会上很受孩子们欢迎。" },
+                    { en: "What do you like to wear when you go to parties?", zh: "你去聚会喜欢穿什么？", answer: "I like wearing clean and casual clothes when I go to parties. They are comfortable and make me feel relaxed when playing with friends.", answerZh: "我去聚会喜欢穿干净休闲的衣服。它们舒服，让我和朋友玩的时候感到放松。" },
+                    { en: "What do you do when you are on a long, boring journey?", zh: "在漫长无聊的旅途中你会做什么？", answer: "When I am on a long journey, I usually listen to music or read picture books. It helps me kill time and makes the journey less boring.", answerZh: "长途旅行时我通常听音乐或看绘本。这帮我打发时间，让旅途不那么无聊。" }
+                ]
+            },
+            // 2: Which (14)
+            {
+                category: "Which",
+                list: [
+                    { en: "Which school are you studying at?", zh: "你在哪所学校上学？", answer: "I am studying at a local primary school in my city. It is a beautiful school with nice teachers and friendly classmates.", answerZh: "我在本市的一所本地小学上学。这是一所美丽的学校，有亲切的老师和友好的同学。" },
+                    { en: "Which school do you go to?", zh: "你去哪所学校？", answer: "I go to No.1 Primary School of my town. I have studied here for several years and I love my school very much.", answerZh: "我去镇上第一小学。我在这里学习了好几年，我非常爱我的学校。" },
+                    { en: "Which middle school do you want to attend? Why?", zh: "你想上哪所中学？为什么？", answer: "I want to attend the best middle school in my district. Because it has good teachers and rich learning resources, which can help me study better.", answerZh: "我想上我区最好的中学。因为那里有好老师和丰富的学习资源，能帮我学得更好。" },
+                    { en: "Which grade are you in?", zh: "你在哪个年级？", answer: "I am in Grade Five now. I learn many new subjects and make more new friends in this grade.", answerZh: "我现在五年级。在这个年级我学了很多新科目，也交了更多新朋友。" },
+                    { en: "Which class are you in?", zh: "你在哪个班？", answer: "I am in Class Two, Grade Five. My class is very united, and all my classmates are kind and helpful.", answerZh: "我在五年级二班。我们班很团结，所有同学都很友善乐于助人。" },
+                    { en: "Which foreign language are you studying at your school?", zh: "你在学校学什么外语？", answer: "I am studying English at my school. It is a very useful foreign language, and it helps me communicate with people from other countries.", answerZh: "我在学校学英语。这是一门非常有用的外语，帮我与来自其他国家的人交流。" },
+                    { en: "Which language is spoken / do you speak in your country?", zh: "你们国家说什么语言？", answer: "We speak Chinese in our country. It is our mother tongue, and many foreign people are also learning it now.", answerZh: "我们国家说中文。它是我们的母语，现在很多外国人也在学习它。" },
+                    { en: "Which festival is popular in your country?", zh: "你们国家流行什么节日？", answer: "The Spring Festival is the most popular festival in China. We can get together with family and enjoy delicious food during the festival.", answerZh: "春节是中国最流行的节日。节日期间我们可以和家人团聚，享用美食。" },
+                    { en: "Which season do you like best? Why?", zh: "你最喜欢哪个季节？为什么？", answer: "I like spring best. Because the weather is warm and sunny, and many beautiful flowers bloom in spring, which makes me feel happy.", answerZh: "我最喜欢春天。因为天气温暖晴朗，春天许多美丽的花朵盛开，让我感到快乐。" },
+                    { en: "Which sports are popular in your country?", zh: "你们国家流行什么运动？", answer: "Many sports are popular in China, such as basketball and table tennis. Lots of students and adults like playing them in their free time.", answerZh: "中国流行很多运动，比如篮球和乒乓球。很多学生和成年人业余时间喜欢玩这些。" },
+                    { en: "Which of these different jobs do you like best?", zh: "这些工作中你最喜欢哪个？", answer: "I like the job of teacher best. Because teachers can help students learn new knowledge and grow up happily.", answerZh: "我最喜欢教师的工作。因为老师能帮学生学习新知识，快乐成长。" },
+                    { en: "Which of these ways of getting to school do you like best?", zh: "这些上学方式你最喜欢哪一种？", answer: "I like walking to school best. It is good exercise and I can enjoy the beautiful scenery on the way to school.", answerZh: "我最喜欢走路去学校。这是很好的锻炼，而且在上学路上可以欣赏美景。" },
+                    { en: "Which of these games do you like best?", zh: "这些游戏你最喜欢哪一个？", answer: "I like playing basketball best among these games. It is an exciting team game and it helps me make more friends.", answerZh: "这些游戏中我最喜欢打篮球。这是一项刺激的团队运动，能帮我交更多朋友。" },
+                    { en: "Which of these types of exercise do you like best?", zh: "这些运动类型你最喜欢哪一种？", answer: "I like swimming best. It is a full-body exercise, and it makes me strong and keeps me healthy.", answerZh: "我最喜欢游泳。这是一项全身运动，让我强壮，保持健康。" }
+                ]
+            },
+            // 3: When (11)
+            {
+                category: "When",
+                list: [
+                    { en: "When do you go to school every day?", zh: "你每天什么时候去上学？", answer: "I go to school at half past seven every day. I always leave home early to avoid being late for school.", answerZh: "我每天七点半去上学。我总是提早出门以免上学迟到。" },
+                    { en: "When do you come home from school every day?", zh: "你每天放学几点回家？", answer: "I come home from school at four o'clock in the afternoon every day. After getting home, I finish my homework first.", answerZh: "我每天下午四点放学回家。到家后我先完成作业。" },
+                    { en: "When does your first lesson start?", zh: "你的第一节课几点开始？", answer: "My first lesson starts at eight o'clock in the morning. We usually have Chinese or Maths as our first lesson.", answerZh: "我的第一节课早上八点开始。我们第一节课通常是语文或数学。" },
+                    { en: "When did you start learning English?", zh: "你什么时候开始学英语的？", answer: "I started learning English when I was six years old. I have learned it for many years and I think it is very interesting.", answerZh: "我六岁开始学英语。我学了很多年了，我觉得它很有趣。" },
+                    { en: "When is your father's / mother's birthday?", zh: "你爸爸/妈妈的生日是什么时候？", answer: "My mother's birthday is in July. We usually have a small birthday party for her and prepare a nice gift.", answerZh: "我妈妈的生日在七月。我们通常会为她举办一个小型生日派对，准备一份好礼物。" },
+                    { en: "When does the weekend start for you and your family?", zh: "你和家人的周末从什么时候开始？", answer: "Our weekend starts on Saturday morning. We can relax and do what we like after a busy school or work week.", answerZh: "我们的周末从周六早上开始。经过忙碌的一周学习和工作后，我们可以放松做自己喜欢的事。" },
+                    { en: "When are the school holidays in your country?", zh: "你们国家的学校假期是什么时候？", answer: "We have summer holidays in July and August, and winter holidays in January and February. The long holidays let us have a good rest.", answerZh: "我们七八月有暑假，一月二月有寒假。长假让我们好好休息。" },
+                    { en: "When and where do you usually watch TV?", zh: "你通常什么时候在哪里看电视？", answer: "I usually watch TV in the living room after finishing my homework in the evening. It is my favourite relaxing time every day.", answerZh: "我晚上完成作业后在客厅看电视。这是每天我最喜欢的放松时间。" },
+                    { en: "When do you enjoy spending time near water?", zh: "你喜欢什么时候在水边度过？", answer: "I enjoy staying near water in summer. Because the air is cool there, and it makes me feel comfortable in hot weather.", answerZh: "我喜欢夏天在水边待着。因为那里的空气凉爽，在炎热的天气里让我感觉舒适。" },
+                    { en: "When was the last time you had a meal with a friend?", zh: "你上次和朋友吃饭是什么时候？", answer: "The last time I had a meal with a friend was last weekend. We ate snacks and talked happily together.", answerZh: "我上次和朋友吃饭是上周末。我们一起吃零食，开心地聊天。" },
+                    { en: "When do you use buses in your town?", zh: "你什么时候在镇上坐公交？", answer: "I use buses when I go to the city centre with my family on weekends. Buses are convenient and cheap for short trips.", answerZh: "我周末和家人去市中心时会坐公交。公交对于短途出行方便又便宜。" }
+                ]
+            },
+            // 4: Where (16)
+            {
+                category: "Where",
+                list: [
+                    { en: "Where do your family live?", zh: "你家住在哪里？", answer: "My family lives in a quiet community in the city. The environment here is good and there are many green trees around.", answerZh: "我家住在城市一个安静的社区。这里环境好，周围有很多绿树。" },
+                    { en: "Where do you want to visit?", zh: "你想去哪里参观？", answer: "I want to visit Beijing in the future. Because there are many famous scenic spots, such as the Great Wall and the Forbidden City.", answerZh: "我未来想去北京参观。因为那里有许多著名景点，比如长城和故宫。" },
+                    { en: "Where do you usually buy your clothes?", zh: "你通常在哪里买衣服？", answer: "I usually buy my clothes in shopping malls near my home. The clothes there are comfortable and suitable for students.", answerZh: "我通常在家附近的商场买衣服。那里的衣服舒适，适合学生。" },
+                    { en: "Where do you usually go on holiday?", zh: "你通常去哪里度假？", answer: "I usually go to coastal cities on holiday with my family. I love watching the sea and walking on the beach.", answerZh: "我通常和家人去沿海城市度假。我喜欢看海，在海滩散步。" },
+                    { en: "Where did you spend your last holiday?", zh: "你上次假期在哪里度过的？", answer: "I spent my last holiday in a small mountain town. The air there is fresh and the scenery is very beautiful.", answerZh: "我上次假期在一个山区小镇度过的。那里的空气清新，风景非常美丽。" },
+                    { en: "Where do you want to go on holiday?", zh: "你想去哪里度假？", answer: "I want to go to Sanya for my next holiday. I can enjoy sunshine and sea views, which makes me very excited.", answerZh: "我下次假期想去三亚。我可以享受阳光和海景，这让我很兴奋。" },
+                    { en: "Where do you do your favourite activities?", zh: "你在哪里做你最喜欢的活动？", answer: "I do my favourite activities in the park near my home. I can run and play games there with my friends freely.", answerZh: "我在家附近的公园做我最喜欢的活动。我可以在那里和朋友们自由地跑和玩游戏。" },
+                    { en: "Where do you usually have lunch?", zh: "你通常在哪里吃午饭？", answer: "I usually have lunch at my school dining hall. The food there is clean and delicious, and it saves me much time.", answerZh: "我通常在学校食堂吃午饭。那里的食物干净美味，而且省了我很多时间。" },
+                    { en: "Where do your family buy food?", zh: "你家在哪里买食物？", answer: "My family usually buys fresh food in the nearby supermarket. The supermarket has all kinds of food and it is very convenient.", answerZh: "我家通常在附近的超市买新鲜食物。超市有各种食物，非常方便。" },
+                    { en: "Where do you usually have dinner?", zh: "你通常在哪里吃晚饭？", answer: "I usually have dinner at home with my parents. Home-cooked food is healthy and makes me feel warm.", answerZh: "我通常在家和父母一起吃晚饭。家常菜健康，让我感到温暖。" },
+                    { en: "When and where do you usually watch TV?", zh: "你通常什么时候在哪里看电视？", answer: "I usually watch TV in my living room in the evening. I only watch TV for a short time to relax after finishing all my study tasks.", answerZh: "我晚上在客厅看电视。我只在完成所有学习任务后看一小会儿放松。" },
+                    { en: "Where do you live?", zh: "你住在哪里？", answer: "I live in a beautiful and peaceful neighbourhood. It is close to my school, so it is very convenient for me to go to school.", answerZh: "我住在一个美丽宁静的社区。它离学校近，所以我上学很方便。" },
+                    { en: "Where do you usually meet your friends?", zh: "你通常在哪里和朋友们见面？", answer: "I usually meet my friends at the school gate after class. Sometimes we also meet in the community park on weekends.", answerZh: "我通常放学后在校门口和朋友们见面。有时周末我们也在社区公园见面。" },
+                    { en: "Where do you like going after school?", zh: "放学后你喜欢去哪里？", answer: "I like going to the park near my school after school. I can relax myself and enjoy the fresh air there.", answerZh: "放学后我喜欢去学校附近的公园。我可以在那里放松自己，享受新鲜空气。" },
+                    { en: "Where do you listen to music?", zh: "你在哪里听音乐？", answer: "I usually listen to music in my bedroom. It is a quiet place, so I can enjoy music peacefully.", answerZh: "我通常在卧室听音乐。那里安静，所以我可以在那里安静地享受音乐。" },
+                    { en: "Where do you eat lunch on school days?", zh: "上学日你在哪里吃午餐？", answer: "On school days, I eat lunch at the school dining hall. Many students eat there together, and the atmosphere is lively.", answerZh: "上学日我在学校食堂吃午餐。很多学生一起在那里吃饭，气氛很热闹。" }
+                ]
+            },
+            // 5: How (46)
+            {
+                category: "How",
+                list: [
+                    { en: "How far is your home from your school?", zh: "你家离学校多远？", answer: "My home is not far from my school. It only takes me about ten minutes to walk to school every day.", answerZh: "我家离学校不远。我每天步行上学只需要大约十分钟。" },
+                    { en: "How old were you when you learned to read?", zh: "你几岁学会阅读的？", answer: "I was about five years old when I learned to read. My parents taught me simple picture books at that time.", answerZh: "我大约五岁学会阅读。那时我父母教我简单的绘本。" },
+                    { en: "How old are you?", zh: "你几岁了？", answer: "I am eleven years old now. I am growing up and learning more new knowledge every day.", answerZh: "我现在十一岁。我正在成长，每天都学到更多新知识。" },
+                    { en: "How long have you studied English?", zh: "你学英语多久了？", answer: "I have studied English for five years. I keep learning it every day and I have made great progress.", answerZh: "我学英语五年了。我每天都坚持学习，并且取得了很大进步。" },
+                    { en: "How long does it take you to get to school?", zh: "你去学校要花多长时间？", answer: "It takes me about ten minutes to walk to school. It is a short time, so I never get up too early.", answerZh: "我步行上学大约需要十分钟。时间很短，所以我从不用起太早。" },
+                    { en: "How long have you lived in your town?", zh: "你在这个小镇住了多久？", answer: "I have lived in this town since I was born. I love this town because it is warm and familiar to me.", answerZh: "我从出生就住在这个小镇。我爱这个小镇因为它对我而言温暖又熟悉。" },
+                    { en: "How big is your town?", zh: "你的小镇有多大？", answer: "My town is not very big but it is very beautiful. There are many communities, parks and small shops here.", answerZh: "我的小镇不是很大但非常美丽。这里有很多社区、公园和小商店。" },
+                    { en: "How do you usually go to school?", zh: "你通常怎么去学校？", answer: "I usually go to school on foot. Walking is good exercise and it makes me energetic in the morning.", answerZh: "我通常步行去学校。走路是很好的锻炼，让我早上精力充沛。" },
+                    { en: "How do you get to school every day?", zh: "你每天怎么去学校？", answer: "I get to school on foot every day. My home is near the school, so it is the most convenient way for me.", answerZh: "我每天步行去学校。我家在学校附近，所以对我来说这是最方便的方式。" },
+                    { en: "How do you think of your class?", zh: "你觉得你们班怎么样？", answer: "I think my class is very warm and united. All my classmates are friendly and we help each other all the time.", answerZh: "我觉得我们班很温暖团结。所有同学都很友好，我们一直互相帮助。" },
+                    { en: "How does your father or mother go to work?", zh: "你爸爸或妈妈怎么去上班？", answer: "My father goes to work by subway. It is fast and never gets stuck in traffic, so it saves him much time.", answerZh: "我爸爸坐地铁上班。地铁快而且从不堵车，所以给他节省了很多时间。" },
+                    { en: "How do you like to travel if you are going on a long journey?", zh: "长途旅行你喜欢怎么去？", answer: "I like travelling by train for a long journey. I can enjoy the scenery outside the window and have a comfortable trip.", answerZh: "长途旅行我喜欢坐火车。我可以欣赏窗外的风景，旅途也舒适。" },
+                    { en: "How do you usually go to travel?", zh: "你通常怎么去旅行？", answer: "I usually travel by car with my family. It is flexible and we can stop anywhere we like on the way.", answerZh: "我通常和家人坐汽车去旅行。很灵活，我们可以中途停在任何我们喜欢的地方。" },
+                    { en: "How do you feel when you listen to music?", zh: "当你听音乐时感觉如何？", answer: "I feel very relaxed and happy when I listen to music. It can make me forget my tiredness after studying.", answerZh: "我听音乐时感到非常放松和开心。它能让我忘记学习后的疲惫。" },
+                    { en: "How often do you have English lessons?", zh: "你多久上一次英语课？", answer: "I have English lessons five times a week. I learn new words and sentences in every English class.", answerZh: "我每周上五次英语课。每节英语课我都学新单词和句子。" },
+                    { en: "How often do you visit / see your grandparents?", zh: "你多久去看望你的祖父母？", answer: "I visit my grandparents every weekend. We have dinner together and chat happily every time.", answerZh: "我每周末去看望祖父母。我们每次都一起吃饭，开心地聊天。" },
+                    { en: "How often do you ride a bike?", zh: "你多久骑一次自行车？", answer: "I ride a bike twice a week. It is a good sport that helps me exercise my body.", answerZh: "我每周骑两次自行车。这是一项很好的运动，帮我锻炼身体。" },
+                    { en: "How often do you go to a park?", zh: "你多久去一次公园？", answer: "I go to the park three or four times a week. I like staying in the park because the air there is fresh.", answerZh: "我每周去公园三四次。我喜欢待在公园，因为那里的空气清新。" },
+                    { en: "How often do you go shopping?", zh: "你多久购物一次？", answer: "I go shopping with my mother once a week. We usually buy daily things and snacks for our family.", answerZh: "我每周和妈妈购物一次。我们通常买日用品的和零食。" },
+                    { en: "How often do you go on holiday?", zh: "你多久度假一次？", answer: "I go on holiday twice a year, in summer and winter vacation. Travelling helps me broaden my horizons.", answerZh: "我每年度假两次，在暑假和寒假。旅行帮助我开阔视野。" },
+                    { en: "How often do you do your favourite hobby?", zh: "你多久做一次你最喜欢的爱好？", answer: "I do my favourite hobby reading every day. I read books for half an hour before going to bed.", answerZh: "我每天做我最喜欢的爱好——阅读。我睡前读半小时书。" },
+                    { en: "How often do you listen to music?", zh: "你多久听一次音乐？", answer: "I listen to music every evening. It is my best way to relax after finishing my homework.", answerZh: "我每晚听音乐。这是我完成作业后最好的放松方式。" },
+                    { en: "How often do you read for fun?", zh: "你多久读一次闲书？", answer: "I read for fun every weekend. I read different storybooks to get new fun and knowledge.", answerZh: "我每周末读闲书。我读不同的故事书获得新乐趣和知识。" },
+                    { en: "How often do you watch videos on the Internet?", zh: "你多久看一次网上视频？", answer: "I watch educational videos on the Internet twice a week. It helps me learn some extra knowledge.", answerZh: "我每周看两次网上的教育视频。这帮我学到一些额外知识。" },
+                    { en: "How often do you chat online with your friends?", zh: "你多久和朋友们在线聊天一次？", answer: "I chat online with my friends once a week. We share our interesting school life with each other.", answerZh: "我每周和朋友们在线聊天一次。我们互相分享有趣的学校生活。" },
+                    { en: "How often do you watch TV with your friends?", zh: "你多久和朋友一起看电视？", answer: "I watch TV with my friends only on holidays. We seldom watch TV on school days to focus on study.", answerZh: "我只在假期和朋友一起看电视。上学日我们很少看电视以专注学习。" },
+                    { en: "How often do you go to the cinema?", zh: "你多久去一次电影院？", answer: "I go to the cinema once a month. Watching movies in the cinema is very exciting and interesting.", answerZh: "我每月去一次电影院。在电影院看电影非常刺激有趣。" },
+                    { en: "How often do you look at the stars in the sky?", zh: "你多久看一次夜空中的星星？", answer: "I look at the stars every clear night. The stars are beautiful and they make me feel peaceful.", answerZh: "每个晴朗的夜晚我都看星星。星星很美，让我感到平静。" },
+                    { en: "How often do you chat to your friends online?", zh: "你多久和朋友们在线聊天一次？", answer: "I chat with my friends online on weekends. I never chat on school days to avoid influencing my study.", answerZh: "我周末在线和朋友聊天。上学日我从不聊天，以免影响学习。" },
+                    { en: "How often do you have lunch with your friends?", zh: "你多久和朋友一起吃午餐？", answer: "I have lunch with my friends every school day. We talk and laugh while eating together.", answerZh: "我每个上学日都和朋友一起吃午餐。我们边吃边聊天说笑。" },
+                    { en: "How often do you go to parties?", zh: "你多久去一次聚会？", answer: "I go to parties several times a year. I always have a great time with my friends at parties.", answerZh: "我每年去几次聚会。我在聚会上总是和朋友们玩得很开心。" },
+                    { en: "How many English teachers do you have at your school?", zh: "你们学校有多少位英语老师？", answer: "We have two English teachers in our school. They are both professional and very kind to all students.", answerZh: "我们学校有两位英语老师。他们都很专业，对所有学生都很友善。" },
+                    { en: "How many hours of sports do you have at school?", zh: "你在学校有多少小时的运动时间？", answer: "We have two hours of sports every day at school. Enough exercise keeps us healthy and active.", answerZh: "我们每天在学校有两小时运动时间。足够的运动让我们保持健康和活跃。" },
+                    { en: "How many students are there in your class?", zh: "你们班有多少学生？", answer: "There are forty students in my class. Our class size is suitable for teachers to take care of every student.", answerZh: "我们班有四十个学生。班级规模适合老师照顾到每个学生。" },
+                    { en: "How many girls are there in your class?", zh: "你们班有多少女生？", answer: "There are twenty-two girls in my class. The girls in my class are hard-working and friendly.", answerZh: "我们班有二十二个女生。我们班的女生勤奋又友好。" },
+                    { en: "How many boys are there in your class?", zh: "你们班有多少男生？", answer: "There are eighteen boys in my class. The boys are active and always help others in need.", answerZh: "我们班有十八个男生。男生们很活跃，总是帮助需要帮助的人。" },
+                    { en: "How many people are there in your family?", zh: "你家有多少人？", answer: "There are three people in my family, my parents and me. We live a happy life together.", answerZh: "我家有三口人，我的父母和我。我们一起过着幸福的生活。" },
+                    { en: "How many brothers and sisters do you have?", zh: "你有几个兄弟姐妹？", answer: "I have no brothers or sisters. I am the only child in my family, but my parents love me very much.", answerZh: "我没有兄弟姐妹。我是家里的独生子，但我的父母非常爱我。" },
+                    { en: "How many rooms are there in your house?", zh: "你家有几个房间？", answer: "There are five rooms in my house, including two bedrooms, a living room, a kitchen and a bathroom.", answerZh: "我家有五个房间，包括两个卧室、一个客厅、一个厨房和一个浴室。" },
+                    { en: "How many seasons are there in your country?", zh: "你们国家有几个季节？", answer: "There are four seasons in China, spring, summer, autumn and winter. Each season has its own beautiful scenery.", answerZh: "中国有四个季节，春、夏、秋、冬。每个季节都有自己美丽的风景。" },
+                    { en: "How many months are there in a year?", zh: "一年有多少个月？", answer: "There are twelve months in a year. Every month has different weather and festivals.", answerZh: "一年有十二个月。每个月有不同的天气和节日。" },
+                    { en: "How many days are there in a week?", zh: "一周有多少天？", answer: "There are seven days in a week. We study on weekdays and rest on weekends.", answerZh: "一周有七天。我们工作日学习，周末休息。" },
+                    { en: "How many minutes are there in an hour?", zh: "一小时有多少分钟？", answer: "There are sixty minutes in an hour. We can do many meaningful things in one hour.", answerZh: "一小时有六十分钟。我们可以在一个小时内做很多有意义的事情。" },
+                    { en: "How many seconds are there in a minute?", zh: "一分钟有多少秒？", answer: "There are sixty seconds in a minute. Every second is precious for us to study and grow.", answerZh: "一分钟有六十秒。每一秒对我们学习和成长都很珍贵。" },
+                    { en: "How much homework do you do every day?", zh: "你每天做多少作业？", answer: "I do a moderate amount of homework every day. It is not too much, and it helps me review what I have learned.", answerZh: "我每天做适量的作业。不是太多，帮我复习学过的内容。" },
+                    { en: "How much are your shoes?", zh: "你的鞋子多少钱？", answer: "My shoes are about one hundred yuan. They are cheap and very comfortable to wear.", answerZh: "我的鞋子大约一百元。它们便宜而且穿起来很舒适。" }
+                ]
+            },
+            // 6: General Questions (40)
+            {
+                category: "General",
+                list: [
+                    { en: "Can you finish your homework by yourself?", zh: "你能自己完成作业吗？", answer: "Yes, I can finish my homework by myself. I am independent and I only ask for help when I meet very difficult problems.", answerZh: "是的，我能自己完成作业。我很独立，只在遇到非常困难的问题时才寻求帮助。" },
+                    { en: "Are there any plants in your house?", zh: "你家有植物吗？", answer: "Yes, there are many green plants in my house. They make our home more beautiful and fresh the air.", answerZh: "是的，我家有很多绿色植物。它们让我们的家更美，空气更新鲜。" },
+                    { en: "Is there a sports centre near your home?", zh: "你家附近有体育中心吗？", answer: "Yes, there is a small sports centre near my home. I often go there to do sports with my parents on weekends.", answerZh: "是的，我家附近有一个小型体育中心。我周末经常和父母去那里运动。" },
+                    { en: "Do all of your family have free time every weekend?", zh: "你家所有人都每个周末有空吗？", answer: "Not all of us have free time. My father is sometimes busy on weekends, but my mother and I are usually free.", answerZh: "不是每个人都有空。我爸爸有时周末很忙，但我和妈妈通常有空。" },
+                    { en: "Do you have any plan for this weekend?", zh: "你这个周末有计划吗？", answer: "Yes, I have a simple plan. I will finish my homework first and then go to the park with my family.", answerZh: "是的，我有一个简单的计划。我会先完成作业，然后和家人去公园。" },
+                    { en: "Do you prefer on-line shopping or in-store shopping? Why?", zh: "你更喜欢网购还是实体店购物？为什么？", answer: "I prefer in-store shopping. Because I can touch and try the things I want to buy, so I will not buy unsuitable goods.", answerZh: "我更喜欢实体店购物。因为我可以触摸和试穿想买的东西，这样不会买到不合适的商品。" },
+                    { en: "Have you ever travelled by plane?", zh: "你坐过飞机旅行吗？", answer: "Yes, I have travelled by plane once. It is very fast and it makes me feel excited to fly in the sky.", answerZh: "是的，我坐过一次飞机。非常快，在天空飞翔让我感到兴奋。" },
+                    { en: "Can you play a musical instrument?", zh: "你会演奏乐器吗？", answer: "Yes, I can play the piano a little. I learn it in my spare time and it makes my life more colourful.", answerZh: "是的，我会弹一点钢琴。我在空闲时间学习，它让我的生活更多彩。" },
+                    { en: "Have you ever been to a concert?", zh: "你去过音乐会吗？", answer: "No, I have never been to a concert. But I hope I can go to a music concert in the future.", answerZh: "不，我没去过音乐会。但我希望将来能去听一场音乐会。" },
+                    { en: "Do you like these different jobs people do? Say why or why not.", zh: "你喜欢人们做的这些不同工作吗？说说原因。", answer: "Yes, I like most of these jobs. Every job is important for our society, and every worker makes our life better.", answerZh: "是的，我喜欢其中的大部分工作。每份工作对社会都重要，每个工作者都让我们的生活更美好。" },
+                    { en: "Do you think working as a pilot is exciting? Why/Why not?", zh: "你觉得当飞行员令人兴奋吗？为什么？", answer: "Yes, I think it is very exciting. Because pilots can fly planes and see different scenery in the sky every day.", answerZh: "是的，我认为非常令人兴奋。因为飞行员可以驾驶飞机，每天在天空看到不同的风景。" },
+                    { en: "Do you think working as a musician is fun? What do you think?", zh: "你觉得当音乐家有趣吗？你怎么看？", answer: "I think it is fun. Musicians can create beautiful music, and their works can bring happiness to many people.", answerZh: "我觉得很有趣。音乐家可以创作优美的音乐，他们的作品能给很多人带来快乐。" },
+                    { en: "Do you think working as a doctor is difficult?", zh: "你觉得当医生难吗？", answer: "Yes, I think it is difficult. Doctors need to learn much professional knowledge and always work very hard to save people.", answerZh: "是的，我觉得很难。医生需要学习很多专业知识，并且总是非常努力地拯救病人。" },
+                    { en: "Do you think working as a cleaner is boring?", zh: "你觉得当清洁工无聊吗？", answer: "No, I don't think so. Cleaners keep our city clean and tidy, and their work is very important and meaningful.", answerZh: "不，我不这么认为。清洁工保持我们的城市干净整洁，他们的工作非常重要而有意义。" },
+                    { en: "Do you think working as a teacher is interesting?", zh: "你觉得当老师有趣吗？", answer: "Yes, it is very interesting. Teachers can stay with young students and help them grow and learn new things.", answerZh: "是的，非常有趣。老师可以和学生们在一起，帮助他们成长和学习新事物。" },
+                    { en: "Would you like to work in a different country in the future? Why/Why not?", zh: "你将来想去国外工作吗？为什么？", answer: "Yes, I would like to. Working in other countries can let me know different cultures and improve my foreign language skills.", answerZh: "是的，我愿意。在异国工作可以让我了解不同的文化，提高我的外语能力。" },
+                    { en: "Do you think it's good to earn a lot of money in a job? Why/Why not?", zh: "你认为工作中赚很多钱好吗？为什么？", answer: "I think it is good. Enough money can help us live a better life and help more people in need.", answerZh: "我认为是好的。足够的钱能帮我们过更好的生活，也能帮助更多有需要的人。" },
+                    { en: "Do you like these different ways of getting to school? Say why or why not.", zh: "你喜欢这些不同的上学方式吗？说说原因。", answer: "Yes, I like them. Different ways have their own advantages, and they bring us convenience to go to school.", answerZh: "是的，我喜欢。不同的方式各有优点，它们给我们上学带来便利。" },
+                    { en: "Do you think getting to school by bus is a good idea? Why/Why not?", zh: "你认为坐公交上学是个好主意吗？为什么？", answer: "Yes, it is a good idea. Taking the bus is cheap and environmentally friendly, and it can reduce traffic pressure.", answerZh: "是的，是个好主意。坐公交便宜又环保，还能减少交通压力。" },
+                    { en: "Do you think taking the train to school is expensive? What do you think?", zh: "你认为坐火车上学贵吗？你怎么看？", answer: "No, I don't think it is expensive. Train tickets are affordable, and the train is fast and safe for students.", answerZh: "不，我觉得不贵。火车票可以负担，而且火车对学生来说又快又安全。" },
+                    { en: "Do you think travelling to school by car is comfortable?", zh: "你认为坐汽车上学舒服吗？", answer: "Yes, it is very comfortable. We don't need to worry about bad weather when we go to school by car.", answerZh: "是的，非常舒服。我们坐汽车上学时不用担心坏天气。" },
+                    { en: "Do you think walking to school is fun?", zh: "你认为走路上学有趣吗？", answer: "Yes, I think it is fun. I can enjoy the morning scenery and breathe fresh air on the way to school.", answerZh: "是的，我觉得有趣。我可以在上学的路上欣赏早晨的风景，呼吸新鲜空气。" },
+                    { en: "Do you think going to school by scooter is dangerous?", zh: "你认为骑滑板车上学危险吗？", answer: "Yes, it is a little dangerous. Scooters are not very stable, and it is easy to have traffic accidents on busy roads.", answerZh: "是的，有点危险。滑板车不太稳，在繁忙的路上容易发生交通事故。" },
+                    { en: "Do you usually travel to school on your own or with friends? Why?", zh: "你通常独自上学还是和朋友一起？为什么？", answer: "I usually go to school with my friends. Walking together is not boring and we can chat on the way.", answerZh: "我通常和朋友一起上学。一起走路不无聊，我们可以在路上聊天。" },
+                    { en: "Do you like these different games? Say why or why not.", zh: "你喜欢这些不同的游戏吗？说说原因。", answer: "Yes, I like all these games. They can exercise my body and help me make more friends.", answerZh: "是的，我喜欢所有这些游戏。它们能锻炼我的身体，帮我交到更多朋友。" },
+                    { en: "Do you think playing table tennis is difficult? Why/Why not?", zh: "你觉得打乒乓球难吗？为什么？", answer: "No, I don't think it is difficult. It is easy to learn, and I can master basic skills after simple practice.", answerZh: "不，我觉得不难。它容易学，简单的练习之后我就能掌握基本技巧。" },
+                    { en: "Do you think watching football is exciting? What do you think?", zh: "你觉得看足球赛令人兴奋吗？你怎么看？", answer: "Yes, it is very exciting. The football match is fast-paced, and every goal makes the audience excited.", answerZh: "是的，非常令人兴奋。足球赛节奏快，每个进球都让观众激动。" },
+                    { en: "Do you think playing computer games is fun?", zh: "你觉得玩电脑游戏有趣吗？", answer: "Yes, it is fun for a short time. But I know I can't play it too long, because it will influence my study and eyesight.", answerZh: "是的，短时间玩很有趣。但我知道不能玩太久，因为会影响学习和视力。" },
+                    { en: "Do you think learning to play chess is interesting?", zh: "你觉得学下棋有趣吗？", answer: "Yes, it is very interesting. Playing chess can exercise my brain and make me more careful and patient.", answerZh: "是的，非常有趣。下棋可以锻炼我的大脑，让我更细心和耐心。" },
+                    { en: "Do you think playing basketball is good for you?", zh: "你认为打篮球对你有好处吗？", answer: "Of course yes. Playing basketball helps me strengthen my body and improve my teamwork spirit.", answerZh: "当然有好处。打篮球帮我增强体质，提高团队合作精神。" },
+                    { en: "Do you enjoy playing games with your family? Why/Why not?", zh: "你喜欢和家人玩游戏吗？为什么？", answer: "Yes, I really enjoy it. Playing games with my family makes our family relationship closer and brings us much happiness.", answerZh: "是的，我非常喜欢。和家人玩游戏让我们的家庭关系更亲密，给我们带来很多快乐。" },
+                    { en: "Do you prefer playing indoor games or outdoor games? Why?", zh: "你更喜欢室内游戏还是户外游戏？为什么？", answer: "I prefer outdoor games. Because I can get close to nature and do more exercise outside, which keeps me healthy.", answerZh: "我更喜欢户外游戏。因为我可以接近大自然，在户外做更多运动，这让我保持健康。" },
+                    { en: "Do you like these different types of exercise? Say why or why not.", zh: "你喜欢这些不同类型的运动吗？说说原因。", answer: "Yes, I like them. All kinds of exercise can make me strong and relax my mind after busy study.", answerZh: "是的，我喜欢。各种运动都能让我强壮，并在忙碌的学习后放松头脑。" },
+                    { en: "Do you think swimming in a pool is nice? Why/Why not?", zh: "你认为在泳池游泳好吗？为什么？", answer: "Yes, it is very nice. Swimming in the pool is safe and comfortable, and it is a great way to keep fit.", answerZh: "是的，非常好。在泳池游泳安全舒适，是保持健康的好方法。" },
+                    { en: "Do you think walking in the mountains is healthy? What do you think?", zh: "你认为在山里走路健康吗？你怎么看？", answer: "Yes, it is very healthy. The mountain air is fresh, and walking can exercise our legs and improve our stamina.", answerZh: "是的，非常健康。山里的空气新鲜，走路能锻炼我们的腿，提高耐力。" },
+                    { en: "Do you think doing dance classes is hard?", zh: "你认为上舞蹈课难吗？", answer: "No, I don't think it is very hard. As long as I keep practicing, I can learn dance well and it makes me elegant.", answerZh: "不，我觉得不是很难。只要我坚持练习，我就能学好舞蹈，它让我变得优雅。" },
+                    { en: "Do you think cycling is a good idea?", zh: "你认为骑自行车是个好主意吗？", answer: "Yes, cycling is a great idea. It is convenient, environmentally friendly and good for our physical health.", answerZh: "是的，骑自行车是个好主意。它方便、环保，而且对我们的身体健康有益。" },
+                    { en: "Do you think exercising on a running machine is fun?", zh: "你觉得在跑步机上锻炼有趣吗？", answer: "Yes, it is fun. I can exercise indoors on rainy days, and it helps me keep exercising every day.", answerZh: "是的，有趣。我可以在下雨天在室内锻炼，这帮我每天坚持运动。" },
+                    { en: "Do you prefer doing exercise alone or with other people? Why?", zh: "你更喜欢独自锻炼还是和别人一起？为什么？", answer: "I prefer doing exercise with others. We can work with each other and make exercise more interesting.", answerZh: "我更喜欢和别人一起锻炼。我们可以互相配合，让锻炼更有趣。" },
+                    { en: "Do you enjoy doing exercise in the mornings? Why/Why not?", zh: "你喜欢早上锻炼吗？为什么？", answer: "Yes, I enjoy it. Morning exercise makes me energetic all day and helps me keep a healthy habit.", answerZh: "是的，我喜欢。早上锻炼让我一整天都精力充沛，帮我保持健康的习惯。" }
+                ]
+            },
+            // 7: Tell me something about… (16)
+            {
+                category: "Tell me",
+                list: [
+                    { en: "Tell me something about your friends.", zh: "跟我讲讲你的朋友们。", answer: "I have many nice friends in my school. We often study and play together after class. They make my school life more fun and colourful.", answerZh: "我在学校有很多好朋友。我们课后经常一起学习和玩耍。他们让我的学校生活更有趣、更多彩。" },
+                    { en: "Tell me something about one of your school friends.", zh: "跟我讲讲你的一个校友朋友。", answer: "Lucy is one of my best school friends. She studies hard and always helps me. We get on very well every day.", answerZh: "Lucy是我最好的校友朋友之一。她学习努力，总是帮助我。我们每天相处得很好。" },
+                    { en: "Tell me something about your family.", zh: "跟我讲讲你的家庭。", answer: "I have a small and happy family with three people. My parents are very kind and supportive. We always care about each other in our daily life.", answerZh: "我有一个三口之家的幸福小家庭。我的父母非常善良和支持我。我们在日常生活中总是互相关心。" },
+                    { en: "Please tell me something about how your family spend time together on special occasions.", zh: "请告诉我你的家人在特殊场合如何共度时光。", answer: "On special festivals, my family always stays together. We cook delicious food and chat with each other. We really enjoy the warm family time.", answerZh: "在特殊节日，我的家人总是聚在一起。我们烹饪美食，互相聊天。我们非常享受温馨的家庭时光。" },
+                    { en: "Tell me something about your favourite subject at school.", zh: "跟我讲讲你在学校最喜欢的科目。", answer: "My favourite subject at school is English. I think it is very interesting and useful. It helps me know more things about the world.", answerZh: "在学校我最喜欢的科目是英语。我觉得它非常有趣和有用。它帮助我了解世界更多事物。" },
+                    { en: "Tell me something about your favourite teacher.", zh: "跟我讲讲你最喜欢的老师。", answer: "My favourite teacher is my English teacher. She teaches us knowledge in interesting ways. She is always patient and nice to all students.", answerZh: "我最喜欢的老师是我的英语老师。她用有趣的方式教我们知识。她对所有学生总是耐心又和蔼。" },
+                    { en: "Please tell me something you like about your school.", zh: "请告诉我你喜欢你学校的哪些方面。", answer: "I love my school because the teachers are very kind. My classmates are friendly and helpful. My school environment is clean and beautiful.", answerZh: "我爱我的学校，因为老师们很和蔼。我的同学们友好又乐于助人。我的学校环境干净又美丽。" },
+                    { en: "Tell me something about a meal that you enjoy.", zh: "跟我讲讲你喜欢的一顿饭。", answer: "I really enjoy the dinner my mum cooks every weekend. The food is healthy and tastes great. I feel warm and happy when I eat with my family.", answerZh: "我非常喜欢妈妈每周末做的晚饭。食物健康又美味。当我和家人一起吃时，我感到温暖和幸福。" },
+                    { en: "Please tell me something about an interesting place you have been to in your town.", zh: "请告诉我你在你的小镇上去过的一个有趣的地方。", answer: "The public library in my town is a very interesting place. It has many kinds of great books. I always have a good time reading there on weekends.", answerZh: "我镇上的公共图书馆是一个非常有趣的地方。那里有很多种类的好书。我周末总是在那里阅读，度过愉快的时光。" },
+                    { en: "Tell me something about how you went to school yesterday.", zh: "告诉我你昨天是怎么去学校的。", answer: "I went to school on foot yesterday morning. The weather was nice and the air was fresh. Walking to school made me feel energetic.", answerZh: "昨天早上我步行去学校。天气好，空气新鲜。走路上学让我感到精力充沛。" },
+                    { en: "Please tell me something about a day you went out with your family.", zh: "请告诉我一个你和家人外出的日子。", answer: "I went to a park with my family last Sunday. We took some snacks and took many photos there. We had a relaxing and happy day together.", answerZh: "上周日我和家人去了公园。我们带了些零食，在那里拍了很多照片。我们一起度过了轻松愉快的一天。" },
+                    { en: "Please tell me something about a day you spent in a park.", zh: "请告诉我你在公园度过的一天。", answer: "I spent a lovely day in a park last Saturday. I played games and ran on the grass with my friend. The park always makes me feel very relaxed.", answerZh: "上周六我在公园度过了愉快的一天。我和朋友在草地上玩游戏、奔跑。公园总是让我感到非常放松。" },
+                    { en: "Please tell me something about a morning you spent outdoors.", zh: "请告诉我你在户外度过的某个早晨。", answer: "I spent a quiet morning in the outdoor park last weekend. I did some simple exercise and enjoyed the fresh air. The lovely morning view made me feel comfortable.", answerZh: "上周末我在户外公园度过了一个宁静的早晨。我做了一些简单运动，享受了新鲜空气。美丽的晨景让我感到舒适。" },
+                    { en: "Please tell me something about a day when you bought a present for someone.", zh: "请告诉我你为某人买礼物的那一天。", answer: "I bought a birthday present for my best friend last month. I chose a cute notebook that she likes. She was very happy when she got the gift.", answerZh: "上个月我给最好的朋友买了一份生日礼物。我选了一本她喜欢的可爱笔记本。她收到礼物时非常开心。" },
+                    { en: "Please tell me something about a day when you enjoyed listening to music with friends.", zh: "请告诉我一个你和朋友一起享受音乐的日子。", answer: "I listened to pop music with my friends last holiday. We shared our favourite songs together. It made us feel relaxed and joyful.", answerZh: "上次假期我和朋友们一起听流行音乐。我们互相分享最喜欢的歌曲。这让我们感到放松和快乐。" },
+                    { en: "Please tell me something about a party you went to.", zh: "请告诉我你参加过的一个派对。", answer: "I went to a fun birthday party last month. I played games and ate sweet cake with my friends. It was an unforgettable and happy experience for me.", answerZh: "上个月我参加了一个有趣的生日派对。我和朋友们玩游戏、吃甜蛋糕。这对我来说是一次难忘又快乐的经历。" }
+                ]
+            }
+        ];
+
+        // --------------------------------------------------------------
+        // 2. 状态变量
+        // --------------------------------------------------------------
+        let currentCategory = 0;          // 当前分类索引
+        let currentIndex = 0;            // 当前题目在 list 中的索引
+        let timerInterval = null;
+        let timeLeft = 10;
+        let isPlaying = false;
+        let audioContext = null;
+        let isRevealed = false;          // 是否显示了题目/答案
+
+        const categoryBtns = document.querySelectorAll('.cat-btn');
+        const playBtn = document.getElementById('playBtn');
+        const timerDisplay = document.getElementById('timerDisplay');
+        const statusHint = document.getElementById('statusHint');
+        const qIndexDisplay = document.getElementById('qIndexDisplay');
+        const progressText = document.getElementById('progressText');
+        const nextBtn = document.getElementById('nextBtn');
+        const showQuestionBtn = document.getElementById('showQuestionBtn');
+        const showAnswerBtn = document.getElementById('showAnswerBtn');
+        const revealArea = document.getElementById('revealArea');
+        const enQuestion = document.getElementById('enQuestion');
+        const zhQuestion = document.getElementById('zhQuestion');
+        const enAnswer = document.getElementById('enAnswer');
+        const zhAnswer = document.getElementById('zhAnswer');
+
+        // --------------------------------------------------------------
+        // 3. 核心函数
+        // --------------------------------------------------------------
+        function getCurrentQuestion() {
+            return questionData[currentCategory].list[currentIndex];
+        }
+
+        function getCategoryName() {
+            return questionData[currentCategory].category;
+        }
+
+        function getTotal() {
+            return questionData[currentCategory].list.length;
+        }
+
+        function updateUI() {
+            const total = getTotal();
+            const idx = currentIndex + 1;
+            qIndexDisplay.textContent = `第 ${idx} / ${total} 题`;
+            progressText.textContent = `${getCategoryName()} · ${idx}/${total}`;
+            // 重置显示区（隐藏）
+            revealArea.style.display = 'none';
+            isRevealed = false;
+            // 重置计时器显示
+            timeLeft = 10;
+            timerDisplay.textContent = timeLeft;
+            // 状态
+            statusHint.textContent = '🎙️ 点击播放';
+            // 如果正在播放则停止
+            if (isPlaying) {
+                stopPlayback();
+            }
+            // 按钮样式
+            playBtn.textContent = '▶';
+            playBtn.classList.remove('playing');
+            // 清除计时
+            clearInterval(timerInterval);
+            timerInterval = null;
+            // 启用下一题
+            nextBtn.disabled = false;
+        }
+
+        // 语音合成（TTS）播放题目
+        function speakQuestion(text, callback) {
+            if (!window.speechSynthesis) {
+                console.warn('浏览器不支持 Speech Synthesis');
+                if (callback) callback();
+                return;
+            }
+            // 取消任何正在进行的语音
+            window.speechSynthesis.cancel();
+
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'en-US';
+            utterance.rate = 0.9;
+            utterance.pitch = 1;
+            // 播放结束回调
+            utterance.onend = function() {
+                if (callback) callback();
+            };
+            utterance.onerror = function(e) {
+                console.warn('TTS error:', e);
+                if (callback) callback();
+            };
+            window.speechSynthesis.speak(utterance);
+        }
+
+        function startTimer() {
+            clearInterval(timerInterval);
+            timeLeft = 10;
+            timerDisplay.textContent = timeLeft;
+            statusHint.textContent = '⏳ 正在回答...';
+
+            timerInterval = setInterval(() => {
+                timeLeft -= 1;
+                timerDisplay.textContent = timeLeft >= 0 ? timeLeft : 0;
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                    statusHint.textContent = '⏰ 时间到！';
+                    // 自动停止播放状态
+                    if (isPlaying) {
+                        stopPlayback();
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopPlayback() {
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+            isPlaying = false;
+            playBtn.textContent = '▶';
+            playBtn.classList.remove('playing');
+            if (!timerInterval) {
+                // 如果计时未结束，但用户停止了，计时继续，不重置。
+                // 但此处只是停止播放，不影响计时
+            }
+        }
+
+        // 播放音频：读题，开始计时
+        function playQuestion() {
+            if (isPlaying) {
+                // 如果正在播放，点击则停止
+                stopPlayback();
+                clearInterval(timerInterval);
+                timerInterval = null;
+                statusHint.textContent = '⏸️ 已暂停';
+                return;
+            }
+
+            // 如果之前有语音，取消
+            if (window.speechSynthesis) {
+                window.speechSynthesis.cancel();
+            }
+
+            const q = getCurrentQuestion();
+            const text = q.en;
+
+            // 播放状态
+            isPlaying = true;
+            playBtn.textContent = '⏹';
+            playBtn.classList.add('playing');
+            statusHint.textContent = '🔊 播放中...';
+
+            // 开始朗读
+            speakQuestion(text, () => {
+                // 朗读结束，开始计时
+                if (isPlaying) {
+                    isPlaying = false;
+                    playBtn.textContent = '▶';
+                    playBtn.classList.remove('playing');
+                    statusHint.textContent = '🗣️ 请回答 (10s)';
+                    startTimer();
+                }
+            });
+
+            // 保险：如果 TTS 没有触发 onend (比如某些浏览器), 设定一个超时开始计时
+            // 但一般都会触发。 设定一个后备超时 8秒后开始计时
+            setTimeout(() => {
+                if (isPlaying) {
+                    // 如果还在播放，但过了8秒，我们强制开始计时（防止卡死）
+                    // 但仍然保持播放，但计时开始
+                    if (timerInterval === null) {
+                        // 但此时可能朗读还没结束，我们提前开始计时？不对，应该等待朗读结束。
+                        // 实际上我们会依赖 onend。此后备主要是为了防止 onend 不触发
+                        // 这里我们简单处理：若8秒后还在播放，则强制结束播放并开始计时
+                        if (window.speechSynthesis) {
+                            window.speechSynthesis.cancel();
+                        }
+                        isPlaying = false;
+                        playBtn.textContent = '▶';
+                        playBtn.classList.remove('playing');
+                        statusHint.textContent = '🗣️ 请回答 (10s)';
+                        startTimer();
+                    }
+                }
+            }, 8000);
+        }
+
+        // 切换分类
+        function switchCategory(index) {
+            if (index === currentCategory && currentIndex < getTotal()) {
+                // 同一分类，不重置索引
+                // 但为了体验，点击分类重置到第一个
+                // 更合理：切换到该分类第一个
+            }
+            currentCategory = index;
+            currentIndex = 0;
+            // 更新高亮
+            categoryBtns.forEach((btn, i) => {
+                btn.classList.toggle('active', i === index);
+            });
+            updateUI();
+            // 重置显示
+            revealArea.style.display = 'none';
+            isRevealed = false;
+        }
+
+        // 显示题目和中文
+        function showQuestion() {
+            const q = getCurrentQuestion();
+            enQuestion.textContent = q.en;
+            zhQuestion.textContent = q.zh;
+            // 保留之前的参考答案区域（但会覆盖）
+            enAnswer.textContent = q.answer;
+            zhAnswer.textContent = q.answerZh;
+            revealArea.style.display = 'block';
+            isRevealed = true;
+        }
+
+        // 显示参考答案 (会同时展示题目)
+        function showAnswer() {
+            const q = getCurrentQuestion();
+            enQuestion.textContent = q.en;
+            zhQuestion.textContent = q.zh;
+            enAnswer.textContent = q.answer;
+            zhAnswer.textContent = q.answerZh;
+            revealArea.style.display = 'block';
+            isRevealed = true;
+        }
+
+        // 下一题
+        function nextQuestion() {
+            if (isPlaying) {
+                stopPlayback();
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+            const total = getTotal();
+            if (currentIndex + 1 < total) {
+                currentIndex++;
+            } else {
+                // 循环到第一题
+                currentIndex = 0;
+                // 或者提示，此处循环
+            }
+            updateUI();
+            // 关闭显示
+            revealArea.style.display = 'none';
+            isRevealed = false;
+            // 如果计时器还在跑，清除
+            clearInterval(timerInterval);
+            timerInterval = null;
+            statusHint.textContent = '🎙️ 点击播放';
+            timeLeft = 10;
+            timerDisplay.textContent = timeLeft;
+            playBtn.textContent = '▶';
+            playBtn.classList.remove('playing');
+            isPlaying = false;
+        }
+
+        // --------------------------------------------------------------
+        // 4. 事件绑定
+        // --------------------------------------------------------------
+        // 分类按钮
+        categoryBtns.forEach((btn, index) => {
+            btn.addEventListener('click', function() {
+                // 如果当前正在播放，停止
+                if (isPlaying) {
+                    stopPlayback();
+                    clearInterval(timerInterval);
+                    timerInterval = null;
+                }
+                switchCategory(index);
+            });
+        });
+
+        // 播放按钮
+        playBtn.addEventListener('click', function() {
+            // 如果目前是停止状态，或者已经播放结束，开始播放
+            // 如果已经显示题目，也可以播放，不影响
+            playQuestion();
+        });
+
+        // 显示题目
+        showQuestionBtn.addEventListener('click', function() {
+            showQuestion();
+        });
+
+        // 显示答案
+        showAnswerBtn.addEventListener('click', function() {
+            showAnswer();
+        });
+
+        // 下一题
+        nextBtn.addEventListener('click', function() {
+            nextQuestion();
+        });
+
+        // 额外：如果用户点击下一题时，停止所有
+        // 初始化
+        switchCategory(0);
+    })();
+</script>
+</body>
+</html>
